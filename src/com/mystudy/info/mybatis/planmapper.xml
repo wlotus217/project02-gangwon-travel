@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PLAN">
+	
+	<select id="totalCount" resultType="int">
+		SELECT COUNT(*) AS CNT FROM TRIPPLAN 
+	</select>
+	
+	<select id="list" resultType="planVO"
+			parameterType="map" >
+		SELECT TRIPNUM, TRIPTITLE, REGION, TRIPTHEME, PURPOSE 
+		  FROM (SELECT ROWNUM R_NUM, P.*
+		          FROM (SELECT *
+		                FROM TRIPPLAN
+		                ORDER BY TRIPNUM DESC
+		                ) P
+		       ) 
+		 WHERE R_NUM BETWEEN #{begin} AND #{end}	
+	</select>
+	
+	<select id="one" parameterType="int" resultType="planVO">
+		SELECT TRIPNUM, TRIPTITLE, REGION, TRIPTHEME, PURPOSE, REGDATE, DAY1, DAY2, DAY3, ID 
+        FROM TRIPPLAN 
+        WHERE TRIPNUM = #{tripnum} 
+	</select>
+	
+	<!-- 게시글 검색 -->
+	<select id="plansearch" parameterType="string" resultType="planVO">
+		SELECT * 
+		FROM TRIPPLAN  
+		WHERE TRIPTITLE LIKE '%' || #{triptitle} || '%' 
+		ORDER BY TRIPNUM DESC 
+	</select>
+	
+	<insert id="planinsert" parameterType="planVO">
+		INSERT INTO TRIPPLAN
+       	       (TRIPNUM, TRIPTITLE, REGION, TRIPTHEME, PURPOSE, DAY1, DAY2, DAY3, REGDATE, ID)
+        VALUES
+        	   (TRIP_SEQ.NEXTVAL, #{triptitle}, #{region}, #{triptheme}, #{purpose}, #{day1}, #{day2}, #{day3}, SYSDATE, #{id}) 
+	</insert>
+	
+	<delete id="plandelete" parameterType="int">
+		DELETE FROM TRIPPLAN 
+		WHERE TRIPNUM = #{tripnum} 
+	</delete>
+	
+	<update id="planmodify" parameterType="planVO">
+		UPDATE TRIPPLAN SET
+			TRIPTITLE = #{triptitle},
+			REGION = #{region},
+			TRIPTHEME = #{triptheme},
+			PURPOSE = #{purpose},
+			DAY1 = #{day1},
+			DAY2 = #{day2},
+			DAY3 = #{day3} 
+		WHERE TRIPNUM = #{tripnum} 
+	</update>
+	<select id="titlesearch" resultType="planVO"
+		parameterType="map" >
+		SELECT S.* 
+		  FROM (SELECT ROWNUM R_NUM, P.*
+		          FROM (SELECT *
+		                FROM TRIPPLAN
+		                ORDER BY TRIPNUM DESC
+		                ) P  
+		                WHERE P.TRIPTITLE LIKE '%'||#{triptitle}||'%' 
+		       ) S
+		 WHERE R_NUM BETWEEN #{begin} AND #{end}
+	</select>
+	
+	<select id="searchtotalCount" resultType="int" parameterType="String">
+		SELECT COUNT(*) AS CNT FROM TRIPPLAN WHERE TRIPTITLE LIKE '%' || #{triptitle} || '%'
+	</select>
+	
+</mapper>
+
+
+
+
+
+

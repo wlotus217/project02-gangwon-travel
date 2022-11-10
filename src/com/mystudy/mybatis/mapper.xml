@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TRIP">
+
+	<!-- 자연관광 -->
+	<select id="natureTotalCount" resultType="int">
+		SELECT COUNT(*) AS CNT FROM NATURE
+	</select>
+
+	<insert id="natureInsert" parameterType="NatureVO">
+		INSERT INTO NATURE
+       		   (BOARDNUM, TITLE, CONTAIN, FILENAME, VIEWNAME1,
+       		    VIEWNAME2, VIEWNAME3, ADDRESS, PAY, PHONE, 
+       		    TIME, WRITEDATE, HIT)
+       	VALUES ((SELECT NVL(MAX(BOARDNUM), 0) + 1 FROM NATURE), #{title}, #{contain}, #{fileName}, #{viewName1},
+       			#{viewName2}, #{viewName3}, #{address}, #{pay}, #{phone}, 
+       			#{time}, SYSDATE, 0)	    
+	</insert>
+	
+	<select id="natureList" parameterType="map" resultType="NatureVO">
+		SELECT *
+  		  FROM (SELECT ROWNUM R_NUM, N.*
+        		FROM (SELECT *
+                	  FROM NATURE 
+                	  ORDER BY BOARDNUM DESC
+               		  ) N
+          		)
+		WHERE R_NUM BETWEEN #{begin} AND #{end}
+	</select>
+	
+	<select id="natureSearch" parameterType="map" resultType="NatureVO">
+		SELECT *
+  		FROM NATURE
+  		<if test="search == 'title'.toString()">
+  		WHERE TITLE LIKE '%'||#{searchKeyword}||'%'
+  		</if>  
+  		<if test="search == 'contain'.toString()">
+		WHERE CONTAIN LIKE '%'||#{searchKeyword}||'%'
+		</if>
+	</select>
+	
+	<select id="natureSearchList" parameterType="map" resultType="NatureVO">
+		SELECT S.*
+		  FROM (SELECT ROWNUM R_NUM, N.*
+        		FROM (SELECT *
+        			  FROM NATURE
+                	  ORDER BY BOARDNUM DESC
+               		  ) N 
+               		  <if test="search == 'title'.toString()">
+  					  WHERE N.TITLE LIKE '%'||#{searchKeyword}||'%'
+  					  </if>  
+  					  <if test="search == 'contain'.toString()">
+					  WHERE N.CONTAIN LIKE '%'||#{searchKeyword}||'%'
+					  </if>
+          		) S
+         WHERE R_NUM BETWEEN #{begin} AND #{end}		
+	</select>
+	
+	<select id="natureSearchTotalCount" parameterType="map" resultType="int">
+		SELECT COUNT(*) AS CNT FROM NATURE
+		<if test="search == 'title'.toString()">
+  		WHERE TITLE LIKE '%'||#{searchKeyword}||'%'
+  		</if>  
+  		<if test="search == 'contain'.toString()">
+		WHERE CONTAIN LIKE '%'||#{searchKeyword}||'%'
+		</if>
+	</select>
+	
+	<select id="natureOne" parameterType="string"
+			resultType="NatureVO">
+		SELECT BOARDNUM, TITLE, CONTAIN, FILENAME, VIEWNAME1,
+			   VIEWNAME2, VIEWNAME3, ADDRESS, PAY, PHONE, 
+			   TIME, WRITEDATE, HIT
+		FROM NATURE
+		WHERE BOARDNUM = #{boardNum}
+	</select>
+	
+	<delete id="natureDelete" parameterType="int">
+		DELETE FROM NATURE WHERE BOARDNUM = #{boardNum}
+	</delete>
+	
+	<update id="natureUpdate" parameterType="NatureVO">
+  	  UPDATE NATURE 
+  	  	 SET TITLE = #{title},
+  	  	 	 CONTAIN = #{contain}, 
+  	  	 	 FILENAME = #{fileName}, 
+  	  	 	 VIEWNAME1 = #{viewName1}, 
+  	  	 	 VIEWNAME2 = #{viewName2}, 
+  	  	 	 VIEWNAME3 = #{viewName3},
+  	  	 	 ADDRESS = #{address},
+  	  	 	 PAY = #{pay},
+  	  	 	 PHONE = #{phone},
+  	  	 	 TIME = #{time},
+  	  	 	 WRITEDATE = SYSDATE
+  	   WHERE BOARDNUM = #{boardNum}
+  	</update>
+	
+	<!-- 문화관광 -->
+	<select id="cultureTotalCount" resultType="int">
+		SELECT COUNT(*) AS CNT FROM CULTURE
+	</select>
+
+	<insert id="cultureInsert" parameterType="CultureVO">
+		INSERT INTO CULTURE
+       		   (BOARDNUM, TITLE, CONTAIN, FILENAME, VIEWNAME1,
+       		    VIEWNAME2, VIEWNAME3, ADDRESS, PAY, PHONE, 
+       		    TIME, WRITEDATE, HIT)
+       	VALUES ((SELECT NVL(MAX(BOARDNUM), 0) + 1 FROM CULTURE), #{title}, #{contain}, #{fileName}, #{viewName1},
+       			#{viewName2}, #{viewName3}, #{address}, #{pay}, #{phone}, 
+       			#{time}, SYSDATE, 0)	    
+	</insert>
+	
+	<select id="cultureList" parameterType="map" resultType="CultureVO">
+		SELECT *
+  		  FROM (SELECT ROWNUM R_NUM, C.*
+        		FROM (SELECT *
+                	  FROM CULTURE 
+                	  ORDER BY BOARDNUM DESC
+               		  ) C
+          		)
+		WHERE R_NUM BETWEEN #{begin} AND #{end}
+	</select>
+	
+	<select id="cultureSearchList" parameterType="map" resultType="CultureVO">
+		SELECT S.*
+		  FROM (SELECT ROWNUM R_NUM, C.*
+        		FROM (SELECT *
+        			  FROM CULTURE
+                	  ORDER BY BOARDNUM DESC
+               		  ) C 
+               		  <if test="search == 'title'.toString()">
+  					  WHERE C.TITLE LIKE '%'||#{searchKeyword}||'%'
+  					  </if>  
+  					  <if test="search == 'contain'.toString()">
+					  WHERE C.CONTAIN LIKE '%'||#{searchKeyword}||'%'
+					  </if>
+          		) S
+         WHERE R_NUM BETWEEN #{begin} AND #{end}		
+	</select>
+	
+	<select id="cultureSearchTotalCount" parameterType="map" resultType="int">
+		SELECT COUNT(*) AS CNT FROM CULTURE
+		<if test="search == 'title'.toString()">
+  		WHERE TITLE LIKE '%'||#{searchKeyword}||'%'
+  		</if>  
+  		<if test="search == 'contain'.toString()">
+		WHERE CONTAIN LIKE '%'||#{searchKeyword}||'%'
+		</if>
+	</select>
+	
+	<select id="cultureSearch" parameterType="map" resultType="CultureVO">
+		SELECT *
+  		FROM CULTURE
+  		<if test="search == 'title'.toString()">
+  		WHERE TITLE LIKE '%'||#{searchKeyword}||'%'
+  		</if>  
+  		<if test="search == 'contain'.toString()">
+		WHERE CONTAIN LIKE '%'||#{searchKeyword}||'%'
+		</if>
+	</select>
+	
+	<select id="cultureOne" parameterType="string"
+			resultType="CultureVO">
+		SELECT BOARDNUM, TITLE, CONTAIN, FILENAME, VIEWNAME1,
+			   VIEWNAME2, VIEWNAME3, ADDRESS, PAY, PHONE, 
+			   TIME, WRITEDATE, HIT
+		FROM CULTURE
+		WHERE BOARDNUM = #{boardNum}
+	</select>
+	
+	<delete id="cultureDelete" parameterType="int">
+		DELETE FROM CULTURE WHERE BOARDNUM = #{boardNum}
+	</delete>
+	
+	<update id="cultureUpdate" parameterType="CultureVO">
+  	  UPDATE CULTURE 
+  	  	 SET TITLE = #{title},
+  	  	 	 CONTAIN = #{contain}, 
+  	  	 	 FILENAME = #{fileName}, 
+  	  	 	 VIEWNAME1 = #{viewName1}, 
+  	  	 	 VIEWNAME2 = #{viewName2}, 
+  	  	 	 VIEWNAME3 = #{viewName3},
+  	  	 	 ADDRESS = #{address},
+  	  	 	 PAY = #{pay},
+  	  	 	 PHONE = #{phone},
+  	  	 	 TIME = #{time},
+  	  	 	 WRITEDATE = SYSDATE
+  	   WHERE BOARDNUM = #{boardNum}
+  	</update>
+	<!-- 체험관광 -->
+	
+	<select id="experienceTotalCount" resultType="int">
+		SELECT COUNT(*) AS CNT FROM EXPERIENCE
+	</select>
+
+	<insert id="experienceInsert" parameterType="ExperienceVO">
+		INSERT INTO EXPERIENCE
+       		   (BOARDNUM, TITLE, CONTAIN, FILENAME, VIEWNAME1,
+       		    VIEWNAME2, VIEWNAME3, ADDRESS, PAY, PHONE, 
+       		    TIME, WRITEDATE, HIT)
+       	VALUES ((SELECT NVL(MAX(BOARDNUM), 0) + 1 FROM EXPERIENCE), #{title}, #{contain}, #{fileName}, #{viewName1},
+       			#{viewName2}, #{viewName3}, #{address}, #{pay}, #{phone}, 
+       			#{time}, SYSDATE, 0)	    
+	</insert>
+	
+	<select id="experienceList" parameterType="map" resultType="ExperienceVO">
+		SELECT *
+  		  FROM (SELECT ROWNUM R_NUM, E.*
+        		FROM (SELECT *
+                	  FROM EXPERIENCE 
+                	  ORDER BY BOARDNUM DESC
+               		  ) E
+          		)
+		WHERE R_NUM BETWEEN #{begin} AND #{end}
+	</select>
+	
+	<select id="experienceSearch" parameterType="map" resultType="ExperienceVO">
+		SELECT *
+  		FROM EXPERIENCE
+  		<if test="search == 'title'.toString()">
+  		WHERE TITLE LIKE '%'||#{searchKeyword}||'%'
+  		</if>  
+  		<if test="search == 'contain'.toString()">
+		WHERE CONTAIN LIKE '%'||#{searchKeyword}||'%'
+		</if>
+	</select>
+	
+	<select id="experienceSearchList" parameterType="map" resultType="ExperienceVO">
+		SELECT S.*
+		  FROM (SELECT ROWNUM R_NUM, E.*
+        		FROM (SELECT *
+        			  FROM EXPERIENCE
+                	  ORDER BY BOARDNUM DESC
+               		  ) E 
+               		  <if test="search == 'title'.toString()">
+  					  WHERE E.TITLE LIKE '%'||#{searchKeyword}||'%'
+  					  </if>  
+  					  <if test="search == 'contain'.toString()">
+					  WHERE E.CONTAIN LIKE '%'||#{searchKeyword}||'%'
+					  </if>
+          		) S
+         WHERE R_NUM BETWEEN #{begin} AND #{end}		
+	</select>
+	
+	<select id="experienceSearchTotalCount" parameterType="map" resultType="int">
+		SELECT COUNT(*) AS CNT FROM EXPERIENCE
+		<if test="search == 'title'.toString()">
+  		WHERE TITLE LIKE '%'||#{searchKeyword}||'%'
+  		</if>  
+  		<if test="search == 'contain'.toString()">
+		WHERE CONTAIN LIKE '%'||#{searchKeyword}||'%'
+		</if>
+	</select>
+	
+	<select id="experienceOne" parameterType="string"
+			resultType="ExperienceVO">
+		SELECT BOARDNUM, TITLE, CONTAIN, FILENAME, VIEWNAME1,
+			   VIEWNAME2, VIEWNAME3, ADDRESS, PAY, PHONE, 
+			   TIME, WRITEDATE, HIT
+		FROM EXPERIENCE
+		WHERE BOARDNUM = #{boardNum}
+	</select>
+	
+	<delete id="experienceDelete" parameterType="int">
+		DELETE FROM EXPERIENCE WHERE BOARDNUM = #{boardNum}
+	</delete>
+	
+	<update id="experienceUpdate" parameterType="ExperienceVO">
+  	  UPDATE EXPERIENCE 
+  	  	 SET TITLE = #{title},
+  	  	 	 CONTAIN = #{contain}, 
+  	  	 	 FILENAME = #{fileName}, 
+  	  	 	 VIEWNAME1 = #{viewName1}, 
+  	  	 	 VIEWNAME2 = #{viewName2}, 
+  	  	 	 VIEWNAME3 = #{viewName3},
+  	  	 	 ADDRESS = #{address},
+  	  	 	 PAY = #{pay},
+  	  	 	 PHONE = #{phone},
+  	  	 	 TIME = #{time},
+  	  	 	 WRITEDATE = SYSDATE
+  	   WHERE BOARDNUM = #{boardNum}
+  	</update>
+  	
+	<!-- 축제 및 행사 -->
+	<select id="festivalTotalCount" resultType="int">
+		SELECT COUNT(*) AS CNT FROM FESTIVAL
+	</select>
+	
+	<insert id="festivalInsert" parameterType="FestivalVO">
+		INSERT INTO FESTIVAL
+       		   (BOARDNUM, MONTH, TITLE, TIME, HOST, 
+       		    ADDRESS, CONTAIN, FILENAME, VIEWNAME1, VIEWNAME2,
+       		    VIEWNAME3, INFORMATION )
+       	VALUES ((SELECT NVL(MAX(BOARDNUM), 0) + 1 FROM FESTIVAL), #{month}, #{title}, #{time}, #{host}, 
+       			#{address}, #{contain}, #{fileName}, #{viewName1}, #{viewName2},
+       			#{viewName3}, #{information})	    
+	</insert>
+	
+	<select id="festivalList" parameterType="map" resultType="FestivalVO">
+		SELECT *
+  		  FROM (SELECT ROWNUM R_NUM, F.*
+        		FROM (SELECT *
+                	  FROM FESTIVAL 
+                	  ORDER BY BOARDNUM DESC
+               		  ) F
+          		)
+		WHERE R_NUM BETWEEN #{begin} AND #{end}
+	</select>
+		
+	<select id="festivalOne" parameterType="string"
+			resultType="FestivalVO">
+		SELECT BOARDNUM, MONTH, TITLE, TIME, HOST, 
+       		    ADDRESS, CONTAIN, FILENAME, VIEWNAME1, VIEWNAME2,
+       		    VIEWNAME3, INFORMATION
+		FROM FESTIVAL
+		WHERE BOARDNUM = #{boardNum}
+	</select>
+	
+	<delete id="festivalDelete" parameterType="int">
+		DELETE FROM FESTIVAL WHERE BOARDNUM = #{boardNum}
+	</delete>
+	
+	<update id="festivalUpdate" parameterType="FestivalVO">
+  	  UPDATE FESTIVAL 
+  	  	 SET MONTH = #{month},
+  	  	 	 TITLE = #{title},
+  	  	 	 TIME = #{time},
+  	  	 	 HOST = #{host},
+  	  	 	 ADDRESS = #{address},
+  	  	 	 CONTAIN = #{contain}, 
+  	  	 	 FILENAME = #{fileName}, 
+  	  	 	 VIEWNAME1 = #{viewName1}, 
+  	  	 	 VIEWNAME2 = #{viewName2}, 
+  	  	 	 VIEWNAME3 = #{viewName3},
+  	  	 	 INFORMATION = #{information}
+  	   WHERE BOARDNUM = #{boardNum}
+  	</update>
+	<!-- 교육여행 -->
+	<insert id="educationInsert" parameterType="EducationVO">
+		INSERT INTO EDUCATION
+       		   (BOARDNUM, TITLE, FILENAME, ORINAME )
+       	VALUES ((SELECT NVL(MAX(BOARDNUM), 0) + 1 FROM EDUCATION), #{title}, #{fileName}, #{oriName})	    
+	</insert>
+	
+	<select id="educationOne" parameterType="string"
+			resultType="EducationVO">
+		SELECT BOARDNUM, TITLE, FILENAME, ORINAME
+		FROM EDUCATION
+		WHERE BOARDNUM = #{boardNum}
+	</select>
+	
+	<select id="educationList" resultType="EducationVO">
+		SELECT * FROM EDUCATION ORDER BY BOARDNUM
+	</select>
+	
+	<delete id="educationDelete" parameterType="int">
+		DELETE FROM EDUCATION WHERE BOARDNUM = #{boardNum}
+	</delete>
+	
+	<!-- 숨은명소 -->
+	<select id="hiddenTotalCount" resultType="int">
+		SELECT COUNT(*) AS CNT FROM HIDDENSPOT
+	</select>
+	
+	<select id="hiddenSearchTotalCount" parameterType="map" resultType="int">
+		SELECT COUNT(*) AS CNT FROM HIDDENSPOT
+		<if test="search == 'title'.toString()">
+  		WHERE TITLE LIKE '%'||#{searchKeyword}||'%'
+  		</if>  
+  		<if test="search == 'contain'.toString()">
+		WHERE CONTAIN LIKE '%'||#{searchKeyword}||'%'
+		</if>
+	</select>
+	
+	<select id="hiddenList" parameterType="map" resultType="HiddenVO">
+		SELECT *
+  		  FROM (SELECT ROWNUM R_NUM, H.*
+        		FROM (SELECT *
+                	  FROM HIDDENSPOT 
+                	  ORDER BY BOARDNUM DESC
+               		  ) H
+          		)
+		WHERE R_NUM BETWEEN #{begin} AND #{end}
+	</select>
+	
+	<select id="hiddenSearchList" parameterType="map" resultType="HiddenVO">
+		SELECT S.*
+		  FROM (SELECT ROWNUM R_NUM, H.*
+        		FROM (SELECT *
+        			  FROM HIDDENSPOT
+                	  ORDER BY BOARDNUM DESC
+               		  ) H 
+               		  <if test="search == 'title'.toString()">
+  					  WHERE H.TITLE LIKE '%'||#{searchKeyword}||'%'
+  					  </if>  
+  					  <if test="search == 'contain'.toString()">
+					  WHERE H.CONTAIN LIKE '%'||#{searchKeyword}||'%'
+					  </if>
+          		) S
+         WHERE R_NUM BETWEEN #{begin} AND #{end}		
+	</select>
+	
+	<select id="hiddenOne" parameterType="string"
+			resultType="HiddenVO">
+		SELECT BOARDNUM, TITLE, ID, FILENAME, CONTAIN, WRITEDATE, HIT
+		FROM HIDDENSPOT
+		WHERE BOARDNUM = #{boardNum}
+	</select>
+	
+	<insert id="hiddenInsert" parameterType="HiddenVO">
+		INSERT INTO HIDDENSPOT
+       		   (BOARDNUM, TITLE, ID, FILENAME, CONTAIN, WRITEDATE, HIT)
+       	VALUES ((SELECT NVL(MAX(BOARDNUM), 0) + 1 FROM HIDDENSPOT), #{title}, #{id}, #{fileName}, #{contain}, SYSDATE, 0)	    
+	</insert>
+	
+	<delete id="hiddenDelete" parameterType="int">
+		DELETE FROM HIDDENSPOT WHERE BOARDNUM = #{boardNum}
+	</delete>
+
+	<update id="hiddenUpdate" parameterType="HiddenVO">
+  	  UPDATE HIDDENSPOT 
+  	  	 SET TITLE = #{title},
+  	  	 	 ID = #{id},
+  	  	 	 CONTAIN = #{contain}, 
+  	  	 	 FILENAME = #{fileName}, 
+  	  	 	 WRITEDATE = SYSDATE
+  	   WHERE BOARDNUM = #{boardNum}
+  	</update>
+  	
+  	<update id="hiddenhitUpdate" parameterType="HiddenVO">
+  	  UPDATE HIDDENSPOT 
+  	  	 SET HIT = HIT + 1
+  	   WHERE BOARDNUM = #{boardNum}
+  	</update>
+  	
+  	<!-- 멤버 -->
+  	<select id="memberList" resultType="MemberVO">
+		SELECT * FROM MEMBER ORDER BY ID
+	</select>
+	
+	<!-- 히든댓글 -->
+	<insert id="hiddenCommentInsert" parameterType="HiddenCommentVO">
+		INSERT INTO HIDDENCOMMENT
+       		   (BOARDNUM, WRITER, PASSWORD, CONTAIN, WRITEDATE)
+       	VALUES ((SELECT NVL(MAX(BOARDNUM), 0) + 1 FROM HIDDENCOMMENT), #{writer}, #{password}, #{contain}, SYSDATE)	    
+	</insert>
+	
+	<select id="hiddenCommentList" resultType="HiddenCommentVO">
+		SELECT * FROM HIDDENCOMMENT ORDER BY BOARDNUM
+	</select>
+	
+	<update id="hiddenCommentUpdate" parameterType="HiddenCommentVO">
+  	  UPDATE HIDDENCOMMENT 
+  	  	 SET WRITER = #{writer},
+  	  	 	CONTAIN = #{contain}
+  	   WHERE BOARDNUM = #{boardNum} AND PASSWORD = #{password}
+  	</update>
+  	
+  	<delete id="hiddenCommentDelete" parameterType="map">
+		DELETE FROM HIDDENCOMMENT WHERE BOARDNUM = #{boardNum}
+	</delete>
+</mapper>

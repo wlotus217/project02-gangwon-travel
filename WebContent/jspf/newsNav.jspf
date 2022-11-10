@@ -1,0 +1,27 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ include file="mainnav.jspf" %>
+
+<!-- 상단 이미지-->
+<!-- <div>
+<img src="imgs/newsmain.jpg">
+</div>
+ -->
+
+<div class="banner_image" style="position: relative;">
+	<img src="imgs/newsmain.jpg">
+	<h1 class="banner_image_text" style="
+	font-size: 50px; 
+	position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate( -50%, -50% );
+    color: white;
+ 	font-weight: bolder;">관광소식</h1>
+ 	<span style="font-size: 20px; position: absolute;
+    top: 70%;
+    left: 50%;
+    transform: translate( -50%, -50% );
+    color: white;
+ 	">강원도가 전하는 다양하고 흥미로운 관광소식을 만나보세요!</span>
+</div>

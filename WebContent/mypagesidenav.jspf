@@ -1,0 +1,75 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<style>
+#sidebar-wrapper {
+    z-index: 1000;
+    left: 250px;
+    width: 0;
+    height: 100%;
+    margin-left: -250px;
+    overflow-y: auto;
+    background: white;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+    width: 300px;
+}
+.sidebar-brand {
+    list-style: none;
+	margin-top: 3px;
+	font-size: 1.5em;
+	margin-right: 20px;
+}
+.sidebar-top {
+    list-style: none;
+	margin-top: 3px;
+	margin-right: 20px;
+    color: white;
+    text-align: left;
+    background-color: #4aa8d8;
+    border: 1px solid #d3d3d3;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sidebar-nav li a:hover {
+    text-decoration: none;
+    color: white;
+    background: #4aa8d8;
+}
+.sidebar-nav li a {
+    display: block;
+    text-decoration: none;
+    color: black;
+    background-color: white;
+    text-align: center;
+    border: 1px solid #d3d3d3;
+    margin-bottom: 2px;
+}
+</style>   
+    
+    
+    
+    
+<div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="sidebar-top">
+                    <h2 style="margin-left: 3px; text-align: center;">마이<br><span style="font-size: 1.5em;">페이지</span></h2>
+                </li>
+                <li class="sidebar-brand">
+                    <a href="mypage.jsp">회원 정보</a>
+                </li>
+                <li class="sidebar-brand">
+                    <a href="updateMember.jsp">회원 수정</a>
+                </li>
+                <li class="sidebar-brand">
+                    <a href="deleteMember.jsp?check=0">회원 탈퇴</a>
+                </li>
+                <li class="sidebar-brand">
+                    <a href="controller3?type=zzimView&id=${ch.id }">내가 찜한 목록</a>
+                </li>
+            </ul>
+</div>

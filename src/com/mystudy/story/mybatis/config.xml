@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+  
+	<settings>
+		<setting name="jdbcTypeForNull" value="NULL"/>
+		<setting name="mapUnderscoreToCamelCase" value="true"/>
+	</settings>
+
+	<typeAliases>
+		<typeAlias alias="ThemeVO" type="com.mystudy.story.vo.ThemeVO"/>		
+		<typeAlias alias="CourseVO" type="com.mystudy.story.vo.CourseVO"/>		
+		<typeAlias alias="ReviewVO" type="com.mystudy.story.vo.ReviewVO"/>		
+		<typeAlias alias="ZzimVO" type="com.mystudy.zzim.vo.ZzimVO"/>		
+		<typeAlias alias="HitVO" type="com.mystudy.story.vo.HitVO"/>		
+	</typeAliases>
+	
+ 
+  <environments default="development">
+    <environment id="development">
+      <transactionManager type="JDBC"/>
+      <dataSource type="POOLED">
+        <property name="driver" value="oracle.jdbc.OracleDriver"/>
+        <property name="url" value="jdbc:oracle:thin:@localhost:1521:xe"/>
+        <property name="username" value="mystudy"/>
+        <property name="password" value="mystudypw"/>
+      </dataSource>
+    </environment>
+  </environments>
+  
+  <mappers>
+    <mapper resource="com/mystudy/story/mybatis/mapper.xml"/>
+  </mappers>
+  
+</configuration>

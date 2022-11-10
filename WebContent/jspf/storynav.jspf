@@ -1,0 +1,25 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<!-- 메인네비 -->
+<%@ include file="mainnav.jspf" %>
+
+<!-- 상단 이미지-->
+
+<div class="banner_image" style="position: relative;">
+	<img src="https://www.gangwon.to/_images/sub/go_to_kangwondo.jpg">
+	<h1 class="banner_image_text" style="
+	font-size: 50px; 
+	position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate( -50%, -50% );
+    color: white;
+ 	font-weight: bolder;">강원도 이야기</h1>
+ 	<span style="font-size: 20px; position: absolute;
+    top: 70%;
+    left: 50%;
+    transform: translate( -50%, -50% );
+    color: white;
+ 	">여기가 어디야? 강원도야! 강원도에서 만드는 나만의 여행 이야기~!</span>
+</div>

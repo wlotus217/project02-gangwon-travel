@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="BBS">
+
+	<!-- 전체 게시글 갯수 조회 -->
+	<select id="totalCount" resultType="int">
+		SELECT COUNT(*) AS CNT FROM NEWS
+	</select>
+	
+	<select id="memberTotalCount" resultType="int">
+		SELECT COUNT(*) AS CNT FROM MEMBER
+	</select>
+	
+	<select id="insertIdCheck" parameterType="String" resultType="int">
+		SELECT COUNT(*) AS CNT FROM MEMBER WHERE ID = #{id}
+	</select>
+	
+	<select id="newsTotalCount" resultType="int">
+		SELECT COUNT(*) AS CNT 
+		FROM( SELECT *
+    			FROM announce        
+    			union all
+				SELECT TO_CHAR(boardnum), id, title, content, pwd, filename, oriname, write_date
+    			FROM news)
+	</select>
+	
+	<select id="anTotalCount" resultType="int">
+		SELECT COUNT(*) AS CNT FROM announce
+	</select>
+	
+	<select id="anSearchCount" parameterType="String" resultType="int">
+		SELECT COUNT(*) AS CNT FROM announce 
+		where title like '%'||#{keyword}||'%'
+	</select>
+	
+	<select id="anNewsSearchCount" parameterType="String" resultType="int">
+		SELECT COUNT(*) AS CNT FROM announce 
+		where title like '%'||#{keyword}||'%'
+	</select>
+	
+	<select id="newsSearchTotalCount" parameterType="String" resultType="int">
+		SELECT COUNT(*) AS CNT 
+    		FROM (SELECT *
+    		FROM announce        
+    		union all
+			SELECT TO_CHAR(boardnum), id, title, content, pwd, filename, oriname, write_date
+    		FROM news) a
+        where a.title like '%'||#{keyword}||'%'
+	</select>
+	<!-- 페이지에 해당하는 게시글 조회 -->
+	<select id="list" parameterType="map" resultType="com.mystudy.bbs.vo.BbsVO">
+		SELECT *
+    	FROM (SELECT ROWNUM R_NUM, B.*
+           		FROM (SELECT *
+                	  FROM BBS
+                  	  ORDER BY BBS_IDX DESC
+                     ) B 
+     	 	  )
+		WHERE R_NUM BETWEEN #{begin} AND #{end}
+	</select>
+	
+	<select id="memberPageList" parameterType="map" resultType="memberVO">
+		SELECT A.*
+    	FROM (SELECT ROWNUM R_NUM, B.*
+           		FROM (SELECT *
+                	  FROM MEMBER
+                  	  ORDER BY ID DESC
+                     ) B 
+     	 	  ) A
+		WHERE R_NUM BETWEEN #{begin} AND #{end}
+	</select>
+	
+	<select id="newsPageList" parameterType="map" resultType="com.mystudy.bbs.vo.BbsVO">
+		SELECT TO_CHAR(boardnum) BOARDNUM, id, title, content, pwd, filename, oriname, write_date
+    	FROM (SELECT ROWNUM R_NUM, B.*
+           		FROM (SELECT *
+                	  FROM NEWS
+                  	  ORDER BY BOARDNUM DESC
+                     ) B 
+     	 	  )
+		WHERE R_NUM BETWEEN #{begin} AND #{end}
+	</select>
+	
+	<select id="newsSearchPageList" parameterType="map" resultType="com.mystudy.bbs.vo.BbsVO">
+		SELECT TO_CHAR(boardnum) BOARDNUM, id, title, content, pwd, filename, oriname, write_date
+    	FROM (SELECT ROWNUM R_NUM, a.*
+           		FROM (SELECT *
+                        FROM announce        
+                        union all
+                        SELECT TO_CHAR(boardnum), id, title, content, pwd, filename, oriname, write_date
+                        FROM news) a 
+                        where a.title like '%'||#{keyword}||'%'
+     	 	  ) b
+		WHERE R_NUM BETWEEN #{begin} AND #{end}
+		ORDER BY b.R_NUM
+	</select>
+	
+	<select id="eBookList" parameterType="bbsVO" resultType="com.mystudy.bbs.vo.BbsVO">
+		SELECT *
+    	FROM e_book
+    	ORDER BY BOARDNUM
+	</select>
+	
+	<select id="promotionList" parameterType="bbsVO" resultType="com.mystudy.bbs.vo.BbsVO">
+		SELECT *
+    	FROM promotion
+    	ORDER BY BOARDNUM
+	</select>
+	
+	<select id="anList" parameterType="bbsVO" resultType="com.mystudy.bbs.vo.BbsVO">
+		SELECT *
+    	FROM announce
+	</select>
+	
+	<select id="newsList" parameterType="bbsVO" resultType="com.mystudy.bbs.vo.BbsVO">
+		SELECT *
+    	FROM announce
+    	union all
+		SELECT TO_CHAR(boardnum), id, title, content, pwd, filename, oriname, write_date
+    	FROM news
+	</select>
+	
+	<select id="newsSearchList" parameterType="bbsVO" resultType="com.mystudy.bbs.vo.BbsVO">
+		select a.*
+		from(SELECT *
+    		FROM announce        
+    		union all
+			SELECT TO_CHAR(boardnum), id, title, content, pwd, filename, oriname, write_date
+    		FROM news) a
+        where a.title like '%'||#{keyword}||'%' 
+	</select>
+	
+	<!-- 게시글 1개 조회 -->
+	<select id="one" parameterType="String" resultType="bbsVO">
+		SELECT BOARDNUM, TITLE, ID, CONTENT, FILENAME, 
+               ORINAME, PWD, WRITE_DATE
+        FROM E_BOOK
+        WHERE BOARDNUM = #{boardNum}
+	</select>
+	
+	<select id="ebookOne" parameterType="String" resultType="bbsVO">
+		SELECT BOARDNUM, TITLE, ID, CONTENT, FILENAME, 
+               ORINAME, PWD, WRITE_DATE
+        FROM E_BOOK
+        WHERE BOARDNUM = #{boardNum}
+	</select>
+		
+	<select id="memberOne" parameterType="String" resultType="memberVO">
+		SELECT *
+        FROM MEMBER
+        WHERE id = #{id}
+	</select>	
+	
+	<select id="proOne" parameterType="String" resultType="bbsVO">
+		SELECT BOARDNUM, TITLE, ID, CONTENT, FILENAME, 
+               ORINAME, PWD, WRITE_DATE
+        FROM PROMOTION
+        WHERE BOARDNUM = #{boardNum}
+	</select>
+	
+	<select id="newsOne" parameterType="String" resultType="bbsVO">
+		SELECT *
+        FROM news
+        WHERE BOARDNUM = #{boardNum}
+	</select>
+	
+	<select id="naOne" parameterType="map" resultType="bbsVO">
+		select a.*
+		from(SELECT *
+    		FROM announce        
+    		union all
+			SELECT TO_CHAR(boardnum), id, title, content, pwd, filename, oriname, write_date
+    		FROM news) a
+        where a.boardnum = #{boardNum} and a.title = #{title}
+	</select>
+	
+	<select id="titleOne" parameterType="String" resultType="bbsVO">
+		select a.*
+		from(SELECT *
+    		FROM announce        
+    		union all
+			SELECT TO_CHAR(boardnum), id, title, content, pwd, filename, oriname, write_date
+    		FROM news) a
+        where a.title = #{title}
+	</select>
+	
+	<select id="newsOne2" parameterType="String" resultType="bbsVO">
+		SELECT *
+        FROM announce
+        WHERE TITLE = #{title}
+	</select>
+	<!-- 로그인 구현 매퍼 -->
+	<!-- id로 정보받기 매퍼 -->
+	<select id="loginId" parameterType="String" resultType="memberVO">
+		SELECT *
+        FROM MEMBER
+        WHERE ID = #{id}
+	</select>
+	
+	<select id="findId" parameterType="String" resultType="memberVO">
+		SELECT *
+        FROM MEMBER
+        WHERE BIRTH = #{birth}
+	</select>
+	
+	<select id="findPassword" parameterType="String" resultType="memberVO">
+		SELECT *
+        FROM MEMBER
+        WHERE ID = #{id}
+	</select>
+	
+	<select id="masterId" parameterType="String" resultType="masterVO">
+		SELECT *
+        FROM MASTER
+        WHERE ID = #{id}
+	</select>
+	
+	<!-- 게시글 입력 -->
+	<insert id="insert" parameterType="bbsVO">
+		INSERT INTO e_book
+       	       (BOARDNUM, TITLE, ID, CONTENT, FILENAME, 
+               ORINAME, PWD, WRITE_DATE)
+        VALUES (e_book_seq.NEXTVAL, #{title}, #{id}, #{content}, #{fileName},
+               #{oriName}, #{pwd}, SYSDATE)
+	</insert>
+	
+	<insert id="newsInsert" parameterType="bbsVO">
+		INSERT INTO NEWS
+       	       (BOARDNUM, TITLE, ID, CONTENT, FILENAME, 
+               ORINAME, PWD, WRITE_DATE)
+        VALUES (NEWS_SEQ.NEXTVAL, #{title}, #{id}, #{content}, #{fileName},
+               #{oriName}, #{pwd}, SYSDATE)
+	</insert>
+	
+	<insert id="anInsert" parameterType="bbsVO">
+		INSERT INTO announce
+       	       (BOARDNUM, TITLE, ID, CONTENT, FILENAME, 
+               ORINAME, PWD, WRITE_DATE)
+        VALUES ('공지', #{title}, '관리자', #{content}, #{fileName},
+               #{oriName}, #{pwd}, SYSDATE)
+	</insert>
+	
+	<insert id="deliveryInsert" parameterType="checkproVO">
+		INSERT INTO DILIVERY
+       	       (BOARDNUM, NAME, PHONE, ADDRESS, TITLE, 
+               NOTE, WRITE_DATE)
+        VALUES (DILIVERY_SEQ.NEXTVAL, #{name}, #{phone}, #{address},
+               #{title}, #{note}, SYSDATE)
+	</insert>
+	
+	<insert id="proInsert" parameterType="bbsVO">
+		INSERT INTO promotion
+       	       (BOARDNUM, TITLE, ID, CONTENT, FILENAME, 
+               ORINAME, PWD, WRITE_DATE)
+        VALUES (promotion_seq.NEXTVAL, #{title}, #{id}, #{content}, #{fileName},
+               #{oriName}, #{pwd}, SYSDATE)
+	</insert>
+	
+	<insert id="insertMember" parameterType="memberVO">
+		INSERT INTO MEMBER
+       	       (ID, PWD, NAME, BIRTH, ADDRESS, PHONE, EMAIL) 
+        VALUES (#{id}, #{pwd}, #{name}, #{birth}, #{address}, #{phone}, #{email})
+	</insert>
+	
+	<insert id="ebookInsert" parameterType="bbsVO">
+		INSERT INTO e_book
+       	       (BOARDNUM, TITLE, ID, CONTENT, FILENAME, 
+               ORINAME, PWD, WRITE_DATE)
+        VALUES (e_book_seq.NEXTVAL, #{title}, #{id}, #{content}, #{fileName},
+               #{oriName}, #{pwd}, SYSDATE)
+	</insert>
+	
+	<update id="update" parameterType="bbsVO">
+		UPDATE e_book
+		SET TITLE = #{title},
+		    ID = #{ID},
+		    FILENAME = #{fileName},
+		    ORINAME = #{oriName},
+		    CONTENT = #{content},
+		    WRITE_DATE = SYSDATE
+		WHERE BOARDNUM = #{boardNum}
+	</update>
+	
+	<update id="anproUpdate" parameterType="bbsVO">
+		UPDATE announce
+		SET FILENAME = #{fileName},
+		    ORINAME = #{oriName},
+		    CONTENT = #{content},
+		    WRITE_DATE = SYSDATE
+		WHERE TITLE = #{title}
+	</update>
+	
+	<update id="anUpdate" parameterType="bbsVO">
+		UPDATE announce
+		SET FILENAME = #{fileName},
+		    ORINAME = #{oriName},
+		    CONTENT = #{content},
+		    WRITE_DATE = SYSDATE
+		WHERE TITLE = #{title}
+	</update>
+	
+	<update id="newsUpdate" parameterType="bbsVO">
+		UPDATE news
+		SET TITLE = #{title},
+		    FILENAME = #{fileName},
+		    ORINAME = #{oriName},
+		    CONTENT = #{content},
+		    WRITE_DATE = SYSDATE
+		WHERE BOARDNUM = #{boardNum}
+	</update>
+	
+	<update id="proUpdate" parameterType="bbsVO">
+		UPDATE PROMOTION
+		SET TITLE = #{title},
+		    FILENAME = #{fileName},
+		    ORINAME = #{oriName},
+		    CONTENT = #{content},
+		    WRITE_DATE = SYSDATE
+		WHERE BOARDNUM = #{boardNum}
+	</update>
+	
+	<update id="eBookUpdate" parameterType="bbsVO">
+		UPDATE e_book
+		SET TITLE = #{title},
+		    FILENAME = #{fileName},
+		    ORINAME = #{oriName},
+		    CONTENT = #{content},
+		    WRITE_DATE = SYSDATE
+		WHERE BOARDNUM = #{boardNum}
+	</update>
+	
+	<update id="updateMember" parameterType="memberVO">
+		UPDATE MEMBER
+		SET PWD = #{pwd},
+		    NAME = #{name},
+		    ADDRESS = #{address},
+		    PHONE = #{phone},
+		    EMAIL = #{email}
+		WHERE ID = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="bbsVO">
+		DELETE FROM E_BOOK WHERE BOARDNUM = #{boardNum}
+	</delete>
+	
+	<delete id="memberDelete" parameterType="memberVO">
+		DELETE FROM MEMBER WHERE ID = #{id}
+	</delete>
+	
+	<delete id="anDelete" parameterType="bbsVO">
+		DELETE FROM announce WHERE TITLE = #{title} AND BOARDNUM = #{boardNum}
+	</delete>
+	
+	<delete id="newsDelete" parameterType="bbsVO">
+		DELETE FROM news WHERE TITLE = #{title} AND BOARDNUM = #{boardNum}
+	</delete>
+	
+	<delete id="ebookDelete" parameterType="bbsVO">
+		DELETE FROM E_BOOK WHERE BOARDNUM = #{boardNum}
+	</delete>
+	
+	<delete id="proDelete" parameterType="bbsVO">
+		DELETE FROM PROMOTION WHERE BOARDNUM = #{boardNum}
+	</delete>
+	
+	<!-- ====== 댓글 데이터 처리 ====== -->
+	<!-- 게시글에 딸린 댓글 데이터 조회 -->
+	<select id="commList" resultType="com.mystudy.bbs.vo.CommentVO"
+			parameterType="int">
+		SELECT COMMENT_IDX, WRITER, CONTENT, PWD, WRITE_DATE, IP, BBS_IDX
+        FROM COMMENTS
+        WHERE BBS_IDX = #{bbsIdx}
+        ORDER BY COMMENT_IDX DESC
+	</select>
+	
+	<insert id="insertComm" parameterType="CommentVO">
+		INSERT INTO COMMENTS
+        (COMMENT_IDX, WRITER, CONTENT, PWD, WRITE_DATE, IP, BBS_IDX)
+		VALUES 
+		(COMMENT_SEQ.NEXTVAL, #{writer}, #{content}, #{pwd}, SYSDATE, 
+       '127.0.0.1', #{bbsIdx})
+	</insert>
+	
+	<delete id="deleteComm" parameterType="CommentVO">
+		DELETE FROM COMMENTS WHERE COMMENT_IDX = #{commentIdx}
+	</delete>
+	
+	<select id="commOne" parameterType="int" resultType="commentVO">
+	   SELECT COMMENT_IDX, WRITER, CONTENT, PWD, WRITE_DATE, IP, BBS_IDX 
+       FROM COMMENTS
+	   WHERE COMMENT_IDX = #{commentIdx}
+	</select>
+	
+</mapper>

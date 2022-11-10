@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="CONTEST">
+
+	<!-- 전체 게시글 갯수 조회 -->
+	<select id="totalCount" resultType="int">
+		SELECT COUNT(*) AS CNT FROM PICCONTEST 
+	</select>
+	
+	<!-- 페이지에 해당하는 게시글 조회 -->
+	<select id="list" resultType="contestVO"
+			parameterType="map" >
+		SELECT PIC_NUM, PICTITLE, PICNAME, PICCONTENT, REGDATE 
+		  FROM (SELECT ROWNUM R_NUM, P.*
+		          FROM (SELECT *
+		                FROM PICCONTEST
+		                ORDER BY PIC_NUM DESC
+		                ) P  
+		       ) 
+		 WHERE R_NUM BETWEEN #{begin} AND #{end}
+	</select> 
+	
+	<select id="titlesearch" resultType="contestVO"
+			parameterType="map" >
+		SELECT S.* 
+		  FROM (SELECT ROWNUM R_NUM, P.*
+		          FROM (SELECT *
+		                FROM PICCONTEST
+		                ORDER BY PIC_NUM DESC
+		                ) P  
+		                WHERE P.PICTITLE LIKE '%'||#{contesttitle}||'%' 
+		       ) S
+		 WHERE R_NUM BETWEEN #{begin} AND #{end}
+	</select>
+	
+	<!-- 게시글 1개 조회 -->
+	<select id="one" parameterType="int" resultType="contestVO">
+		SELECT PIC_NUM, PICTITLE, PICNAME, PICCONTENT, REGDATE 
+        FROM PICCONTEST 
+        WHERE PIC_NUM = #{picNum} 
+	</select>
+	
+	<select id="searchtotalCount" resultType="int" parameterType="String">
+		SELECT COUNT(*) AS CNT FROM PICCONTEST WHERE PICTITLE LIKE '%' || #{contesttitle} || '%'
+	</select>
+	
+	<!-- 게시글 검색 -->
+	<!-- <select id="titlesearch" parameterType="string" resultType="contestVO">
+		SELECT PIC_NUM, PICTITLE, PICNAME, PICCONTENT, REGDATE 
+		FROM PICCONTEST  
+		WHERE PICTITLE LIKE '%' || #{picTitle} || '%' 
+	</select> -->
+	
+	<delete id="contestdelete" parameterType="int">
+		DELETE FROM PICCONTEST 
+		WHERE PIC_NUM = #{picNum} 
+	</delete>
+	
+	<update id="contestmodify" parameterType="contestVO">
+		UPDATE PICCONTEST SET
+			PICTITLE = #{picTitle},
+			PICNAME = #{picName},
+			PICCONTENT = #{picContent}
+		WHERE PIC_NUM = #{picNum} 
+	</update>
+	
+	<insert id="contestinsert" parameterType="contestVO">
+		INSERT INTO PICCONTEST
+       	       (PIC_NUM, PICTITLE, PICNAME, PICCONTENT, REGDATE) 
+        VALUES (PIC_NUM.NEXTVAL, #{picTitle}, #{picName}, #{picContent}, SYSDATE) 
+	</insert>
+	
+</mapper>
+
+
+
+
+
+

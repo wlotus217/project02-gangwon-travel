@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="story">
+	
+<!-- 테마여행 -->
+	<!-- 전체 게시글 갯수 조회 -->
+	<select id="totalCount" resultType="int">
+		SELECT COUNT(*) AS CNT FROM THEMETRAVEL
+	</select>
+  
+  	<!-- 페이지에 해당하는 게시글 조회 -->
+  	<select id="pageList" parameterType="map" resultType="ThemeVO">
+	  	SELECT *
+	 		FROM ( SELECT ROWNUM R_NUM, T.* 
+	        		FROM (SELECT * FROM THEMETRAVEL ORDER BY IDX DESC) T
+	    	)
+		WHERE R_NUM BETWEEN #{begin} AND #{end}
+  	</select> 
+  
+  	<!-- 게시글 1개 조회 -->
+  	<select id="selectOneTheme" parameterType="int" resultType="ThemeVO">
+  		SELECT *
+        FROM THEMETRAVEL
+        WHERE IDX = #{idx}
+  	</select>
+	 
+	<!-- 게시글 작성 -->
+	<insert id="insertTheme" parameterType="ThemeVO">
+		INSERT INTO THEMETRAVEL
+			(IDX,ID,TITLE,INTRO,IMAGE1,IMAGE2,IMAGE3,IMAGE4,IMAGE5
+			,PLACENAME1,PLACENAME2,PLACENAME3,PLACENAME4,PLACENAME5,DETAIL1,DETAIL2,DETAIL3,DETAIL4,DETAIL5)
+		VALUES(THEMETRAVEL_SEQ.NEXTVAL, #{id}, #{title}, #{intro}, #{image1}, #{image2}, #{image3}, #{image4},#{image5}
+			,#{placeName1},#{placeName2},#{placeName3},#{placeName4},#{placeName5},#{detail1},#{detail2},#{detail3},#{detail4},#{detail5})
+	</insert>
+
+	<!-- 게시글 수정 -->
+	<update id="updateTheme" parameterType="ThemeVO">
+		UPDATE THEMETRAVEL
+			SET TITLE = #{title},
+				INTRO = #{intro},
+				IMAGE1 = #{image1},
+				IMAGE2 = #{image2},
+				IMAGE3 = #{image3},
+				IMAGE4 = #{image4},
+				IMAGE5 = #{image5},
+				PLACENAME1 = #{placeName1},
+				PLACENAME2 = #{placeName2},
+				PLACENAME3 = #{placeName3},
+				PLACENAME4 = #{placeName4},
+				PLACENAME5 = #{placeName5},
+				DETAIL1 = #{detail1},
+				DETAIL2 = #{detail2},
+				DETAIL3 = #{detail3},
+				DETAIL4 = #{detail4},
+				DETAIL5 = #{detail5}
+		WHERE IDX = #{idx}
+	</update>
+	
+	<!-- 게시글 삭제 -->
+	<delete id="deleteTheme" parameterType="int">
+		DELETE FROM THEMETRAVEL
+		WHERE IDX = #{idx}
+	</delete>
+	
+	<!-- 동적검색 전체 게시글 갯수 조회 -->
+	<select id="searchTotalCount" resultType="int" parameterType="map">
+		SELECT COUNT(*) 
+		FROM THEMETRAVEL 
+		<choose>
+			<when test="search == 'title'">
+				WHERE TITLE LIKE '%${searchKeyword}%' 
+			</when>
+			<when test="search == 'content'">
+				WHERE INTRO LIKE '%${searchKeyword}%'
+				OR DETAIL1 LIKE '%${searchKeyword}%'
+				OR DETAIL2 LIKE '%${searchKeyword}%'
+				OR DETAIL3 LIKE '%${searchKeyword}%'
+				OR DETAIL4 LIKE '%${searchKeyword}%'
+				OR DETAIL5 LIKE '%${searchKeyword}%'
+				 
+			</when>
+		</choose>
+	</select>
+  
+  	<!-- 동적검색 페이지에 해당하는 게시글 조회 -->
+  	<select id="SearchpageList" parameterType="map" 
+  		resultType="ThemeVO">
+	  	SELECT *
+	 		FROM ( SELECT ROWNUM R_NUM, T.* 
+	        		FROM (SELECT * FROM THEMETRAVEL 
+							<choose>
+								<when test="search == 'title'">
+									WHERE TITLE LIKE '%${searchKeyword}%' 
+									
+								</when>
+								<when test="search == 'content'">
+									WHERE INTRO LIKE '%${searchKeyword}%'
+									OR DETAIL1 LIKE '%${searchKeyword}%'
+									OR DETAIL2 LIKE '%${searchKeyword}%'
+									OR DETAIL3 LIKE '%${searchKeyword}%'
+									OR DETAIL4 LIKE '%${searchKeyword}%'
+									OR DETAIL5 LIKE '%${searchKeyword}%'
+									 
+								</when>
+							</choose> 
+							ORDER BY IDX DESC) T
+					)
+		WHERE R_NUM BETWEEN #{begin} AND #{end}
+  	</select>
+
+
+
+	
+<!-- 추천코스  -->
+	
+	<!-- 전체 게시글 갯수 조회 -->
+	<select id="totalCountCourse" resultType="int">
+		SELECT COUNT(*) AS CNT FROM COURSE
+	</select>
+	
+	<!-- 페이지에 해당하는 게시글 조회 -->
+  	<select id="pageListCourse" parameterType="map" resultType="CourseVO">
+	  	SELECT *
+	 		FROM ( SELECT ROWNUM R_NUM, C.* 
+	        		FROM (SELECT * FROM COURSE ORDER BY IDX DESC) C
+	    	)
+		WHERE R_NUM BETWEEN #{begin} AND #{end}
+  	</select> 
+	
+	<!-- 게시글 1개 조회 -->
+  	<select id="selectOneCourse" parameterType="int" resultType="CourseVO">
+  		SELECT *
+        FROM COURSE
+        WHERE IDX = #{idx}
+  	</select>
+  	
+  	<!-- tDay 로 게시글 조회 -->
+  	<select id="searchCourse" parameterType="string" resultType="CourseVO">
+  		SELECT *
+        FROM COURSE
+        <choose>
+			<when test="tDay == 1">
+				WHERE TDAY = '1'
+			</when>
+			<when test="tDay == 2">
+				WHERE TDAY = '2'
+			</when>
+		</choose>
+        
+        ORDER BY IDX DESC
+  	</select>
+  	
+  	
+  	<!--일정별 게시글 갯수 조회 -->
+	<select id="totalCountCourseTDay" parameterType="string" resultType="int">
+		SELECT COUNT(*) AS CNT FROM COURSE WHERE TDAY = #{tDay}
+	</select>
+	
+	<!--일정별 페이지에 해당하는 게시글 조회 -->
+  	<select id="pageListCourseTDay" parameterType="map" resultType="CourseVO">
+	  	SELECT *
+	 		FROM ( SELECT ROWNUM R_NUM, C.* 
+	        		FROM (SELECT * FROM COURSE WHERE TDAY = #{tDay} ORDER BY IDX DESC) C
+	    	)
+		WHERE R_NUM BETWEEN #{begin} AND #{end}
+  	</select> 
+  
+  
+	<!-- 추천코스 게시글 등록 -->
+	<insert id="insertCourse" parameterType="CourseVO">
+		INSERT INTO COURSE
+			(IDX, ID, TITLE, INTRO, IMAGE, TDAY, DAY1, DAY2, DAY3, PLACENAME, PLACELA, PLACEMA )
+		VALUES(COURSE_SEQ.NEXTVAL, #{id}, #{title}, #{intro}, #{image}, #{tDay}
+		, #{day1}, #{day2}, #{day3}, #{placeName}, #{placeLa}, #{placeMa})
+	</insert>
+	
+	<update id="updateCourse" parameterType="CourseVO">
+		UPDATE COURSE
+			SET TITLE = #{title},
+				INTRO = #{intro},
+				IMAGE = #{image}, 
+				TDAY = #{tDay}, 
+				DAY1 = #{day1},
+				DAY2 = #{day2},
+				DAY3 = #{day3}
+		WHERE IDX = #{idx}
+	</update>
+	
+	
+	<delete id="deleteCourse" parameterType="int">
+		DELETE FROM COURSE
+		WHERE IDX = #{idx}
+	</delete>
+	
+	
+	
+	
+	
+<!-- 여행 후기-->
+
+	<!-- 전체 게시글 갯수 조회 -->
+	<select id="totalCountReview" resultType="int">
+		SELECT COUNT(*) AS CNT FROM REVIEW
+	</select>
+  
+  	<!-- 페이지에 해당하는 게시글 조회 -->
+  	<select id="pageListReview" parameterType="map" resultType="ReviewVO">
+	  	SELECT *
+	 		FROM ( SELECT ROWNUM R_NUM, R.* 
+	        		FROM (SELECT * FROM REVIEW ORDER BY IDX DESC) R
+	    	)
+		WHERE R_NUM BETWEEN #{begin} AND #{end}
+  	</select> 
+  
+  	<!-- 게시글 1개 조회 -->
+  	<select id="selectOneReview" parameterType="int" resultType="ReviewVO">
+  		SELECT *
+        FROM REVIEW
+        WHERE IDX = #{idx}
+  	</select>
+	 
+	<insert id="insertReview" parameterType="ReviewVO">
+		INSERT INTO REVIEW
+			(IDX, ID, TITLE, CONTENT, IMAGE1, IMAGE2, IMAGE3)
+		VALUES(REVIEW_SEQ.NEXTVAL, #{id}, #{title}, #{content}, #{image1}, #{image2}, #{image3})
+	</insert>
+
+	<update id="updateReview" parameterType="ReviewVO">
+		UPDATE REVIEW
+			SET TITLE = #{title},
+				CONTENT = #{content},
+				IMAGE1 = #{image1},
+				IMAGE2 = #{image2}, 
+				IMAGE3 = #{image3}
+		WHERE IDX = #{idx}
+	</update>
+	
+	<delete id="deleteReview" parameterType="int">
+		DELETE FROM REVIEW
+		WHERE IDX = #{idx}
+	</delete>
+	
+	
+	<!-- 동적검색 : 제목, 내용 -->
+	<select id="searchReview" parameterType="map" resultType="ReviewVO">
+		SELECT * 
+		FROM REVIEW
+		<choose>
+			<when test="search == 'title'">
+				WHERE TITLE LIKE '%${searchKeyword}%' 
+			</when>
+			<when test="search == 'content'">
+				WHERE CONTENT LIKE '%${searchKeyword}%'
+			</when>
+		</choose> 
+		ORDER BY IDX DESC
+	</select>
+
+
+	<!-- 동적검색 전체 게시글 갯수 조회 -->
+	<select id="searchTotalCountReview" resultType="int" parameterType="map">
+		SELECT COUNT(*) 
+		FROM REVIEW 
+		<choose>
+			<when test="search == 'title'">
+				WHERE TITLE LIKE '%${searchKeyword}%' 
+			</when>
+			<when test="search == 'content'">
+				WHERE CONTENT LIKE '%${searchKeyword}%'
+			</when>
+		</choose>
+	</select>
+  
+  	<!-- 동적검색 페이지에 해당하는 게시글 조회 -->
+  	<select id="SearchpageListReview" parameterType="map" resultType="ReviewVO">
+	  	SELECT *
+	 		FROM ( SELECT ROWNUM R_NUM, R.* 
+	        		FROM (SELECT * FROM REVIEW 
+							<choose>
+								<when test="search == 'title'">
+									WHERE TITLE LIKE '%${searchKeyword}%' 
+									
+								</when>
+								<when test="search == 'content'">
+									WHERE CONTENT LIKE '%${searchKeyword}%'
+								</when>
+							</choose> 
+							ORDER BY IDX DESC) R
+					)
+		WHERE R_NUM BETWEEN #{begin} AND #{end}
+  	</select>
+
+
+
+<!-- 찜 -->
+			
+	<!-- 찜 등록 -->
+		<insert id="addZzim" parameterType="ZzimVO" >
+			INSERT INTO ZZIM
+				(IDX, ID, BOARDNAME, BOARDIDX, TITLE, IMAGE)
+			VALUES (ZZIM_SEQ.NEXTVAL, #{id}, #{boardName}, #{boardIdx}, #{title}, #{image})
+		</insert>
+		
+	<!-- 찜 리스트 조회 -->	
+		<select id="selectListZzim" parameterType="string" resultType="ZzimVO">
+			SELECT *
+			FROM ZZIm
+			WHERE ID = #{id}
+			ORDER BY REGDATE DESC
+		</select>
+		 
+	<!-- 찜 삭제 -->	
+		<delete id="deleteZzim" parameterType="int">
+			DELETE FROM ZZIM
+			WHERE IDX = #{idx}
+		
+		</delete>
+		
+	<!-- 찜 조회 id, boardName, boardidx 로-->	
+		<select id="selectOneZzim" parameterType="ZzimVO" resultType="ZzimVO">
+			SELECT *
+			FROM ZZIM
+			WHERE ID = #{id}
+			AND BOARDNAME= #{boardName}
+			AND BOARDIDX= #{boardIdx}
+		</select>
+		
+		
+	<!-- 전체 게시글 갯수 조회 -->
+	<select id="zzimTotalCount" parameterType="string" resultType="int">
+		SELECT COUNT(*) AS CNT FROM ZZIM 
+		WHERE ID = #{id} 
+	    ORDER BY REGDATE DESC
+	</select>
+  
+  	<!-- 페이지에 해당하는 게시글 조회 -->
+  	<select id="selectPageListZzim" parameterType="map" resultType="ZzimVO">
+	  	SELECT *
+	 		FROM ( SELECT ROWNUM R_NUM, Z.* 
+	        		FROM (SELECT * FROM ZZIM WHERE ID = #{id} ORDER BY REGDATE DESC) Z
+	    	)
+		WHERE R_NUM BETWEEN #{begin} AND #{end}
+  	</select>
+  	
+  	<!-- 게시물 찜 개수 조회 --> 	
+  	<select id="zzimCountPost" parameterType="map" resultType="int">
+  		SELECT COUNT(*) FROM ZZIM
+  		WHERE BOARDNAME = #{boardName}
+  		AND BOARDIDX = #{boardIdx}
+  	</select>
+	
+	<!-- 인기관광지 -->
+	<select id="hitTravel" resultType="hitVO">
+		SELECT * FROM HIT;
+
+	</select>
+</mapper>

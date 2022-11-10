@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="INFO">
+
+	<!-- 전체 게시글 갯수 조회 -->
+	<select id="totalCount" resultType="int">
+		SELECT COUNT(*) AS CNT FROM INFOMATION 
+	</select>
+	
+	<!-- 페이지에 해당하는 게시글 조회 -->
+	<select id="list" resultType="infoVO"
+			parameterType="map" >
+		SELECT INFONUM, INFO, CITY, CITYPHONE, ADDRESS
+		  FROM (SELECT ROWNUM R_NUM, I.*
+		          FROM (SELECT *
+		                FROM INFOMATION
+		                ORDER BY INFONUM DESC
+		                ) I
+		       ) 
+		 WHERE R_NUM BETWEEN #{begin} AND #{end}	
+	</select>
+	
+	<!-- 게시글 1개 조회 -->
+	<select id="one" parameterType="int" resultType="infoVO">
+		SELECT INFONUM, INFO, CITY, CITYPHONE, ADDRESS 
+        FROM INFOMATION 
+        WHERE INFONUM = #{infonum} 
+	</select>
+	
+	<select id="titlesearch" resultType="infoVO"
+			parameterType="map" >
+		SELECT S.* 
+		  FROM (SELECT ROWNUM R_NUM, P.*
+		          FROM (SELECT *
+		                FROM INFOMATION
+		                ORDER BY INFONUM DESC
+		                ) P  
+		                WHERE P.INFO LIKE '%'||#{info}||'%' 
+		       ) S
+		 WHERE R_NUM BETWEEN #{begin} AND #{end}
+	</select>
+	
+	<select id="searchtotalCount" resultType="int" parameterType="String">
+		SELECT COUNT(*) AS CNT FROM INFOMATION WHERE INFO LIKE '%' || #{info} || '%'
+	</select>
+	
+	<!-- 게시글 입력 -->
+	<insert id="insert" parameterType="infoVO">
+		INSERT INTO INFOMATION
+       	       (INFONUM, INFO, CITY, CITYPHONE, ADDRESS) 
+        VALUES (INF_NUM.NEXTVAL, #{info}, #{city}, #{cityphone}, address)
+	</insert>
+	
+	
+</mapper>
+
+
+
+
+
+

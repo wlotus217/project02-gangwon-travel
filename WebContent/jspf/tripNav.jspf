@@ -1,0 +1,27 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ include file="mainnav.jspf" %>
+
+<!-- 상단 이미지-->
+<!-- <div>
+<img src="imgs/gangwondo_trip.jpg">
+</div>
+ -->
+
+<div class="banner_image" style="position: relative;">
+	<img src="imgs/gangwondo_trip.jpg">
+	<h1 class="banner_image_text" style="
+	font-size: 50px; 
+	position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate( -50%, -50% );
+    color: white;
+ 	font-weight: bolder;">강원도 여행지</h1>
+ 	<span style="font-size: 20px; position: absolute;
+    top: 70%;
+    left: 50%;
+    transform: translate( -50%, -50% );
+    color: white;
+ 	">맑은 바람, 깨끗한 자연, 강원도의 관광명소로 떠나는 강원도 여행</span>
+</div>
